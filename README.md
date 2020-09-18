@@ -11,6 +11,7 @@ In future i may try k8s as suggested by ssh banner upon login of aws node.
 kubectl should still work the same.
 
 ## kubectl commands
+```
 kubectl get nodes
 kubectl get pods
 kubectl get pods --watch
@@ -19,7 +20,8 @@ kubectl logs -f <pod-name>
 kubectl get services
 kubectl get jobs
 kubectl get deployments
-  
+```
+
 ### run a new pod and execute bash
 kubectl run- my-shell --rm -i --tty --image golang:1.13 -- bash
 
