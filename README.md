@@ -23,14 +23,14 @@ kubectl get deployments
 ```
 
 ### run a new pod and execute bash
-kubectl run- my-shell --rm -i --tty --image golang:1.13 -- bash
+```kubectl run- my-shell --rm -i --tty --image golang:1.13 -- bash```
 
 ### run command on existing pod and execute bash
-kubectl exec --stdin --tty pod-name-here-1234 -- /bin/bash
+```kubectl exec --stdin --tty pod-name-here-1234 -- /bin/bash```
 
 ### Apply Manifest
-kubectl apply -f 0100-SimpleHTTPServer.yaml
+```kubectl apply -f 0100-SimpleHTTPServer.yaml```
 
 ### Remove Manifest (kills pods)
-kubectl delete -f 0100-SimpleHTTPServer.yaml
+```kubectl delete -f 0100-SimpleHTTPServer.yaml```
 
