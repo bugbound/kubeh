@@ -1,0 +1,38 @@
+aws-kube-h
+
+# create new free tier instance using t2.micro running AMI ID ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20200814 
+# create new keypair (this will be used to ssh into new instance)
+
+# from your local dev machine, add your new aws keypair...
+ssh-add keypair.donwloaded.from.aws.pem
+
+#ssh into new instance...
+ssh ubuntu@ec2-18-130-85-64.eu-west-2.compute.amazonaws.com
+
+ec2-18-130-85-64.eu-west-2.compute.amazonaws.com
+
+# install k3s
+curl -sfL https://get.k3s.io | sh -
+
+# get config and save to local dev machine as kubeconfig.kubeh 
+cat /etc/rancher/k3s/k3s.yaml
+
+#setup dir on instance to store our juicy data
+mkdir /data
+chown ubuntu.ubuntu /data
+
+
+# setup ssh forwarding so we dont need to expose k3s ports to the world via the firewall
+ssh -L 6443:localhost:6443 ubuntu@ec2-18-130-85-64.eu-west-2.compute.amazonaws.com
+
+export KUBECONFIG=/home/g/Desktop/aws-kube-h/kubeconfig.kubeh 
+
+# Run simple http server and expose /data dir...
+kubectl apply -f 0100-SimpleHTTPServer.yaml
+
+# setup ssh forwarding for our SimpleHTTPServer so we dont need to expose SimpleHTTPServer ports to the world via the firewall
+ssh -L 8000:localhost:8000 ubuntu@ec2-18-130-85-64.eu-west-2.compute.amazonaws.com
+
+
+
+*** for now we dont worry about wildcard domains as need to deploy flask store api!

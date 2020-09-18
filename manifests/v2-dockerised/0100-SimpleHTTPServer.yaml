@@ -1,0 +1,50 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: httpserver-deployment
+spec:
+  selector:
+    matchLabels:
+      app: httpserver
+  replicas: 1 # only run 1 pod
+  template:
+    metadata:
+      labels:
+        app: httpserver
+    spec:
+      volumes:
+      - name: data-volume
+        hostPath: 
+          path: /data
+          type: Directory
+      containers:
+      - name: httpserver
+        image: python:2
+        volumeMounts:
+        - name: data-volume
+          mountPath: /kubeh-data
+        command: 
+        - /bin/sh
+        - -c
+        - |
+          echo starting webserver to expose /data dir on aws kubeh instance...
+          cd /kubeh-data
+          echo its alive > debug.log.txt
+          python -m SimpleHTTPServer
+        
+        ports:
+        - containerPort: 8000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: httpserver-service
+spec:
+  selector:
+    app: httpserver
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: LoadBalancer
+

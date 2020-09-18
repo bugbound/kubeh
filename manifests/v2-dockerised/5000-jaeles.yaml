@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jaeles-goesbrrr
+  labels:
+    app: jaeles-goesbrrr
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    metadata:
+      labels:
+        app: jaeles-goesbrrr
+    spec:
+      volumes:
+      - name: data-volume
+        hostPath: 
+          path: /data
+          type: Directory
+      containers:
+      - name: jaeles-goesbrrr
+        image: bugbound/kubeh-jaeles
+        volumeMounts:
+        - name: data-volume
+          mountPath: /kubeh-data 
+        command: 
+        - /bin/sh
+        - -c
+        - |
+          echo getting latest jaeles-project/jaeles-signatures
+          cd /go/jaeles-signatures
+          git pull
+          
+          cd /go
+          
+          echo setting up jaeles data dir...
+          mkdir -p /kubeh-data/output/jaeles/
+          mv /kubeh-data/output/jaeles/urls_to_attack.txt /kubeh-data/output/jaeles/previous.urls_to_attack.txt
+          mv /kubeh-data/output/jaeles/jaeles.txt /kubeh-data/output/jaeles/previous.jaeles.txt
+    
+          echo generating urls_to_attack.txt
+          cat /kubeh-data/output/httpx/raw.httpx.txt| cut -f 1 -d " " >  /kubeh-data/output/jaeles/urls_to_attack.txt
+          
+          echo running jaeles...
+          jaeles scan -c 20 -s ./jaeles-signatures/ -U /kubeh-data/output/jaeles/urls_to_attack.txt -o /kubeh-data/output/jaeles/jaeles.txt
+          
+          echo All done son.
+          
+        #command: ["sleep", "10m"]
+      restartPolicy: Never
+      
+

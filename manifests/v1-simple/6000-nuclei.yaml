@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nuclei-goesbrrr
+  labels:
+    app: nuclei-goesbrrr
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    metadata:
+      labels:
+        app: nuclei-goesbrrr
+    spec:
+      volumes:
+      - name: data-volume
+        hostPath: 
+          path: /data
+          type: Directory
+      containers:
+      - name: nuclei-goesbrrr
+        image: golang
+        volumeMounts:
+        - name: data-volume
+          mountPath: /kubeh-data 
+        command: 
+        - /bin/sh
+        - -c
+        - |
+          echo installing stuff
+          git clone https://github.com/projectdiscovery/nuclei.git; cd nuclei/cmd/nuclei/; go build; mv nuclei /usr/local/bin/; nuclei -h
+          cd /go; git clone https://github.com/projectdiscovery/nuclei-templates
+
+          echo getting latest nuclei templates...
+          cd /go/nuclei-templates
+          git pull
+          cd /go
+                    
+          echo setting up nuclei dir
+          mkdir -p /kubeh-data/output/nuclei/
+          mv /kubeh-data/output/nuclei/nuclei.txt /kubeh-data/output/nuclei/previous.nuclei.txt
+
+          echo running nuclei
+          
+          input="/kubeh-data/scope/inscope.webservers.txt"
+          while IFS= read -r line
+          do
+            echo "Looking up $line"
+            output_dirname=`echo $line | tr :/ -`
+            mkdir -p /kubeh-data/output/nuclei/webservers/$output_dirname
+            mv /kubeh-data/output/nuclei/webservers/$output_dirname/nuclei.txt /kubeh-data/output/nuclei/webservers/$output_dirname/previous.nuclei.txt
+            echo $line | nuclei -c 5 -nC -t ./nuclei-templates/ -o /kubeh-data/output/nuclei/webservers/$output_dirname/nuclei.txt
+          done < "$input"
+          
+          echo All done son.
+          
+        #command: ["sleep", "10m"]
+      restartPolicy: Never
+      
+

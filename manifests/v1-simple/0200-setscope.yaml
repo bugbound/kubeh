@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: scope-setup
+  labels:
+    app: scope-setup
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    metadata:
+      labels:
+        app: scope-setup
+    spec:
+      volumes:
+      - name: data-volume
+        hostPath: 
+          path: /data
+          type: Directory
+      containers:
+      - name: scope-setup
+        image: golang
+        volumeMounts:
+        - name: data-volume
+          mountPath: /kubeh-data
+        command: 
+        - /bin/sh
+        - -c
+        - |
+          echo Setting scope...
+          
+          echo setting up scope dir...
+          rm -rf /kubeh-data/scope/
+          mkdir -p /kubeh-data/scope/
+
+          ### CHANGE THIS ###
+          
+          echo https://www.example.com > /kubeh-data/scope/inscope.webservers.txt
+          echo https://app1.example.com/app1 >> /kubeh-data/scope/inscope.webservers.txt
+          echo https://www.example.com/blog >> /kubeh-data/scope/inscope.webservers.txt
+          
+          echo www.example.com > /kubeh-data/scope/inscope.domains.txt
+          echo app1.example.com >> /kubeh-data/scope/inscope.domains.txt
+          
+          echo All done son.
+          
+        #command: ["sleep", "10m"]
+      restartPolicy: Never
+      
+

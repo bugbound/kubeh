@@ -1,0 +1,28 @@
+DockerImages build notes, dont run this... this is just a reminder for me to push images to docker hub
+In future it may be best to push images to a private image repoitory running inside the kube
+
+#build nuclei
+docker build -t bugbound/kubeh-nuclei .
+docker push bugbound/kubeh-nuclei
+
+#build gau image
+docker build -t bugbound/kubeh-gau .
+docker push bugbound/kubeh-gau
+
+#build httpx image
+docker build -t bugbound/kubeh-httpx .
+docker push bugbound/kubeh-httpx
+
+
+#build unfurl image
+docker build -t bugbound/kubeh-unfurl .
+docker push bugbound/kubeh-unfurl
+
+#build kxss image
+docker build -t bugbound/kubeh-kxss .
+docker push bugbound/kubeh-kxss
+
+
+#build jaeles image
+docker build -t bugbound/kubeh-jaeles .
+docker push bugbound/kubeh-jaeles

@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gau
+  labels:
+    app: gau
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    metadata:
+      labels:
+        app: gau
+    spec:
+      volumes:
+      - name: data-volume
+        hostPath: 
+          path: /data
+          type: Directory
+      containers:
+      - name: gau
+        image: bugbound/kubeh-gau
+        volumeMounts:
+        - name: data-volume
+          mountPath: /kubeh-data
+        command: 
+        - /bin/sh
+        - -c
+        - |
+          echo setting up gau dir
+          mv /kubeh-data/output/gau/gau.txt /kubeh-data/output/gau/previous.gau.txt
+          mkdir -p /kubeh-data/output/gau/
+          
+          echo Running gua...
+          input="/kubeh-data/scope/inscope.domains.txt"
+          while IFS= read -r line
+          do
+            echo "Looking up $line"
+            echo $line | gau >> /kubeh-data/output/gau/gau.txt
+          done < "$input"
+        
+          
+          echo All done son.
+
+
+          
+        #command: ["sleep", "10m"]
+      restartPolicy: Never
+

@@ -1,0 +1,62 @@
+#taken from  https://twitter.com/ofjaaah/status/1299017775545974785
+# payload: curl -s https://dns.bufferover.run/dns?q=.att.com |jq -r .FDNS_A[] | sed -s 's/,/\n/g' | httpx -silent -title | anew
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: httpx
+  labels:
+    app: httpx
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    metadata:
+      labels:
+        app: httpx
+    spec:
+      volumes:
+      - name: data-volume
+        hostPath: 
+          path: /data
+          type: Directory
+      containers:
+      - name: httpx
+        image: bugbound/kubeh-httpx
+        volumeMounts:
+        - name: data-volume
+          mountPath: /kubeh-data
+        command: 
+        - /bin/sh
+        - -c
+        - |
+          mkdir -p /kubeh-data/output/httpx/      
+          echo mv previous data to lastrun to compare with latest results
+          mv /kubeh-data/output/httpx/raw.httpx.txt /kubeh-data/output/httpx/lastrun.httpx.txt
+          
+          #httpx -h
+          
+          echo getting input file...
+          input="/kubeh-data/scope/inscope.domains.txt"
+
+          
+          echo scope
+          cat $input
+          
+          echo running httpx
+          #httpx -debug -timeout 120 -ports 80,443,6443,8000,8080  -no-color -http-proxy http://192.168.26.1:8081/ -l $input -title -content-length -status-code -o /data/BBS_PROJECT_CODE/output/discovery/httpx/raw.httpx.txt
+          httpx -debug -timeout 120 -ports 80,443,6443,8000,8080  -no-color  -l $input -title -content-length -status-code -o /kubeh-data/output/httpx/raw.httpx.txt
+          
+          
+          echo generating whats new
+          cat /kubeh-data/output/httpx/raw.httpx.txt | anew /kubeh-data/output/httpx/lastrun.httpx.txt > /kubeh-data/output/httpx/new.httpx.txt 
+          
+          
+          
+          echo found `cat /kubeh-data/output/httpx/raw.httpx.txt | wc -l` alive web servers
+          echo found `cat /kubeh-data/output/httpx/new.httpx.txt | wc -l` new alive web servers on this run
+          echo All done son.
+          
+        #command: ["sleep", "10m"]
+      restartPolicy: Never
+      
+
