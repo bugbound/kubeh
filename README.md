@@ -10,9 +10,7 @@ In this example we run k3s, a stripped down lighter version of the full blown Ku
 In future i may try k8s as suggested by ssh banner upon login of aws node.
 kubectl should still work the same.
 
-
-Once the kube has been setup, some handy kubectl commands:
-
+## kubectl commands
 kubectl get nodes
 kubectl get pods
 kubectl get pods --watch
@@ -21,10 +19,16 @@ kubectl logs -f <pod-name>
 kubectl get services
 kubectl get jobs
 kubectl get deployments
+  
+### run a new pod and execute bash
+kubectl run- my-shell --rm -i --tty --image golang:1.13 -- bash
 
-##Apply Manifest
+### run command on existing pod and execute bash
+kubectl exec --stdin --tty pod-name-here-1234 -- /bin/bash
+
+### Apply Manifest
 kubectl apply -f 0100-SimpleHTTPServer.yaml
 
-##Remove Manifest (kills pods)
+### Remove Manifest (kills pods)
 kubectl delete -f 0100-SimpleHTTPServer.yaml
 
