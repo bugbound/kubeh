@@ -32,14 +32,14 @@ spec:
           rm -rf /kubeh-data/scope/
           mkdir -p /kubeh-data/scope/
           
-          # taken from public hackerone bounty program - https://hackerone.com/watson_group
+          ### CHANGE THIS ###
           
-          echo https://www.superdrug.com > /kubeh-data/scope/inscope.webservers.txt
-          echo https://www.parknshop.com >> /kubeh-data/scope/inscope.webservers.txt
-          echo https://www.superdrug.com/blog >> /kubeh-data/scope/inscope.webservers.txt
+          echo https://www.example.com > /kubeh-data/scope/inscope.webservers.txt
+          echo https://app1.example.com/app1 >> /kubeh-data/scope/inscope.webservers.txt
+          echo https://www.example.com/blog >> /kubeh-data/scope/inscope.webservers.txt
           
-          echo www.superdrug.com > /kubeh-data/scope/inscope.domains.txt
-          echo www.parknshop.com >> /kubeh-data/scope/inscope.domains.txt
+          echo www.example.com > /kubeh-data/scope/inscope.domains.txt
+          echo app1.example.com >> /kubeh-data/scope/inscope.domains.txt
           
           echo All done son.
           
