@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wordlist-params
+  labels:
+    app: wordlist-params
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    metadata:
+      labels:
+        app: wordlist-params
+    spec:
+      volumes:
+      - name: data-volume
+        hostPath: 
+          path: /data
+          type: Directory
+      containers:
+      - name: wordlist-params
+        image: golang
+        volumeMounts:
+        - name: data-volume
+          mountPath: /kubeh-data
+        command: 
+        - /bin/bash
+        - -c
+        - |
+          mkdir -p /kubeh-data/output/custom-wordlists/
+          mv /kubeh-data/output/custom-wordlists/params.txt /kubeh-data/output/custom-wordlists/previous.params.txt
+          
+          echo installing tomnomnom/unfurl
+          go get -u github.com/tomnomnom/unfurl
+          
+          echo generating param list from discovered urls...
+          cat /kubeh-data/output/gau/gau.txt | unfurl --unique keys > /kubeh-data/output/custom-wordlists/params.txt
+          
+          echo All done son.
+          
+        #command: ["sleep", "10m"]
+      restartPolicy: Never
+
