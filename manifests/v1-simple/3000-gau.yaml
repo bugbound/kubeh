@@ -37,7 +37,10 @@ spec:
           while IFS= read -r line
           do
             echo "Looking up $line"
-            echo $line | gau >> /kubeh-data/output/gau/gau.txt
+            output_dirname=`echo $line | tr :/ -`
+            mkdir -p /kubeh-data/output/gau/domains/$output_dirname
+            
+            echo $line | gau > /kubeh-data/output/gau/domains/$output_dirname/gau.txt
           done < "$input"
         
           

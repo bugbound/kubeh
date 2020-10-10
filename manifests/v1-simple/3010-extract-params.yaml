@@ -33,7 +33,7 @@ spec:
           go get -u github.com/tomnomnom/unfurl
           
           echo generating param list from discovered urls...
-          cat /kubeh-data/output/gau/gau.txt | unfurl --unique keys > /kubeh-data/output/custom-wordlists/params.txt
+          cat /kubeh-data/output/gau/domains/*/gau.txt | unfurl --unique keys > /kubeh-data/output/custom-wordlists/params.txt
           
           echo All done son.
           
